@@ -1,10 +1,9 @@
 import Row from "./Row";
 
 export default function Grid(props) {
-  let [headPosition, setHeadPosition, gameStarted, gridVar, style] = [
+  let [headPosition, setHeadPosition, gridVar, style] = [
     props.headPosition,
     props.setHeadPosition,
-    props.gameStarted,
     props.gridVar,
     {
       display: "flex",

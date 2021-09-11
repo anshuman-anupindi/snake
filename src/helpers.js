@@ -1,7 +1,7 @@
 let [gridVar, snakeStartCondition] = [
   [],
   (j, k) => {
-    return j == 8 && k >= 3 && k <= 6;
+    return (j == 8 && k >= 4 && k <= 6) || (j == 7 && k == 6);
   },
 ];
 
@@ -13,19 +13,5 @@ for (let j = 0; j < 17; j++) {
     snakeStartCondition(j, k) ? gridVar[j].push(1) : gridVar[j].push(0);
   }
 }
-
-// const handleMovement = (e) => {
-//   if (gameStarted) {
-//     if (e.key == "ArrowUp") {
-//       setHeadPosition([headPosition[0] - 1, headPosition[1]]);
-//     } else if (e.key == "ArrowDown") {
-//       setHeadPosition([headPosition[0] + 1, headPosition[1]]);
-//     } else if (e.key == "ArrowRight") {
-//       setHeadPosition([headPosition[0], headPosition[1] + 1]);
-//     } else if (e.key == "ArrowLeft") {
-//       setHeadPosition([headPosition[0], headPosition[1] - 1]);
-//     }
-//   }
-// };
 
 export default gridVar;
