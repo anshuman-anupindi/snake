@@ -5,102 +5,149 @@ import { useEffect, useState } from "react";
 import gridVar from "./helpers";
 
 function App() {
-  let [grid, setGrid] = useState(gridVar);
+  let grid = gridVar;
   let [gameLost, setGameLost] = useState(false);
+  let speed = 500;
 
   let [currentDirection, setCurrentDirection] = useState("r");
 
-  let [headPosition, setHeadPosition] = useState([7, 6]);
-  let [headlessSnakePositionArr, setHeadlessSnakePositionArr] = useState([
+  let [snakeCoords, setSnakeCoords] = useState([
     [8, 3],
     [8, 4],
     [8, 5],
     [8, 6],
+    [7, 6],
   ]);
-  let [randomFood, setRandomFood] = useState([
+  let [food, setFood] = useState([
     Math.floor(Math.random() * 17),
     Math.floor(Math.random() * 17),
   ]);
-  let [isFoodEaten, setIsFoodEaten] = useState(false);
 
-  function handleHeadlessMovement() {
-    let newHeadlessArr = headlessSnakePositionArr.slice(0);
-    newHeadlessArr.shift();
-    newHeadlessArr.push(headPosition);
-    setHeadlessSnakePositionArr(newHeadlessArr);
-  }
-
-  function handleHeadMovement(headPosition) {
-    let [headRowNum, headColNum, newHeadPosition] = [
-      headPosition[0],
-      headPosition[1],
-      headPosition,
-    ];
-    if (currentDirection == "r") {
-      newHeadPosition = [headRowNum, headColNum + 1];
-    } else if (currentDirection == "l") {
-      newHeadPosition = [headRowNum, headColNum - 1];
-    } else if (currentDirection == "d") {
-      newHeadPosition = [headRowNum + 1, headColNum];
-    } else if (currentDirection == "u") {
-      newHeadPosition = [headRowNum - 1, headColNum];
+  const directionHandler = (e) => {
+    e = e || window.event;
+    switch (e.keyCode) {
+      case 38:
+        setCurrentDirection("u");
+        break;
+      case 40:
+        setCurrentDirection("d");
+        break;
+      case 37:
+        setCurrentDirection("l");
+        break;
+      case 39:
+        setCurrentDirection("r");
+        break;
     }
-
-    setHeadPosition(newHeadPosition);
-  }
-
-  function moveSnake() {
-    let [headRowNum, headColNum] = [headPosition[0], headPosition[1]];
-    let [newGrid, doesSnakeLive, doesSnakeDie] = [
-      grid.slice(0),
-      headRowNum > 0 && headRowNum < 17 && headColNum > 0 && headColNum < 17,
-      headRowNum == 0 ||
-        headRowNum == 17 ||
-        headColNum == 0 ||
-        headColNum == 17,
-    ];
-
-    if (doesSnakeLive) {
-      handleHeadMovement(headPosition);
-      let snakeCoordArr = headlessSnakePositionArr.concat([headPosition]);
-
-      snakeCoordArr.forEach((snakeCoord, idx) => {
-        let [[x, y], isTail] = [snakeCoord, idx == 0];
-        if (isTail) {
-          newGrid[x][y] = 0;
-        } else {
-          newGrid[x][y] = 1;
-        }
-      });
-
-      handleHeadlessMovement();
-      setGrid(newGrid);
-    } else if (doesSnakeDie) {
-      setGameLost(true);
-    }
-  }
-
-  const directionChanger = (e) => {
-    let [newDirection, arrowObject] = [
-      e.key,
-      { ArrowRight: "r", ArrowLeft: "l", ArrowDown: "d", ArrowUp: "u" },
-    ];
-    console.log("direction change working");
-    setCurrentDirection(arrowObject[newDirection]);
   };
 
-  useEffect(() => setTimeout(moveSnake, 1000), [grid]);
-  useEffect(() => alert("You died!"), [gameLost]);
+  function moveSnake() {
+    let [head, newSnake] = [
+      snakeCoords[snakeCoords.length - 1],
+      snakeCoords.slice(0),
+    ];
+    switch (currentDirection) {
+      case "r":
+        head = [head[0], head[1] + 1];
+        break;
+      case "d":
+        head = [head[0] + 1, head[1]];
+        break;
+      case "l":
+        head = [head[0], head[1] - 1];
+        break;
+      case "u":
+        head = [head[0] - 1, head[1]];
+        break;
+    }
+    newSnake.push(head);
+    if (head[0] == food[0] && head[1] == food[1]) {
+      makeRandomFood();
+    } else {
+      newSnake.shift();
+    }
+    checkInsideBorders();
+    checkHasEatenItself();
+
+    if (!gameLost) {
+      setSnakeCoords(newSnake);
+    }
+  }
+
+  function checkInsideBorders() {
+    let head = snakeCoords[snakeCoords.length - 1];
+    if (head[0] == -1 || head[0] == 17 || head[1] == 17 || head[1] == -1)
+      setGameLost(true);
+  }
+
+  function makeRandomFood() {
+    setFood([Math.floor(Math.random() * 17), Math.floor(Math.random() * 17)]);
+  }
+
+  function checkHasEatenItself() {
+    let [snakeHead, snakeRest] = [
+      snakeCoords[snakeCoords.length - 1],
+      snakeCoords.slice(0, snakeCoords.length - 1),
+    ];
+    snakeRest.forEach((snakeCoord) => {
+      if (snakeCoord[0] == snakeHead[0] && snakeCoord[1] == snakeHead[1]) {
+        setGameLost(true);
+      }
+    });
+  }
+
+  useEffect(() => {
+    if (gameLost) {
+      alert(`You died! Your snake was ${snakeCoords.length} pieces long.`);
+      speed = 0;
+    } else {
+      setTimeout(moveSnake, speed);
+    }
+  }, [snakeCoords]);
 
   return (
-    <div className="App" onKeyPress={(e) => directionChanger(e)}>
+    <div
+      className="App"
+      onKeyDown={(e) => directionHandler(e)}
+      style={{ display: "flex", flexDirection: "row" }}
+    >
       <Grid
+        className="App"
         gridVar={grid}
-        headPosition={headPosition}
-        setHeadPosition={setHeadPosition}
+        snakeCoords={snakeCoords}
         currentDirection={currentDirection}
         setCurrentDirection={setCurrentDirection}
+        food={food}
+        onKeyDown={(e) => directionHandler(e)}
       />
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        <button
+          onClick={() => setCurrentDirection("u")}
+          disabled={currentDirection == "d"}
+        >
+          Up
+        </button>
+        <div style={{ display: "flex", flexDirection: "row" }}>
+          <button
+            onClick={() => setCurrentDirection("l")}
+            disabled={currentDirection == "r"}
+          >
+            Left
+          </button>
+          <button
+            onClick={() => setCurrentDirection("d")}
+            disabled={currentDirection == "u"}
+          >
+            Down
+          </button>
+          <button
+            onClick={() => setCurrentDirection("r")}
+            disabled={currentDirection == "l"}
+          >
+            Right
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

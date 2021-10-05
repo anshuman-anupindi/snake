@@ -1,10 +1,10 @@
 import Row from "./Row";
 
 export default function Grid(props) {
-  let [headPosition, setHeadPosition, gridVar, style] = [
-    props.headPosition,
-    props.setHeadPosition,
+  let [snakeCoords, gridVar, food, style] = [
+    props.snakeCoords,
     props.gridVar,
+    props.food,
     {
       display: "flex",
       flexDirection: "column",
@@ -14,7 +14,7 @@ export default function Grid(props) {
   ];
 
   let rowArray = gridVar.map((row, idx) => (
-    <Row rowVar={row} rowNum={idx}></Row>
+    <Row rowVar={row} rowNum={idx} snakeCoords={snakeCoords} food={food}></Row>
   ));
 
   return <div style={style}>{rowArray}</div>;
