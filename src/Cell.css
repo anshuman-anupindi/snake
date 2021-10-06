@@ -1,0 +1,20 @@
+div .snake {
+  width: 15px;
+  height: 15px;
+  background: #00062e;
+  border: 1px solid #c8e84a;
+}
+
+div .food {
+  width: 15px;
+  height: 15px;
+  background: #00062e;
+  border: 1px solid #c8e84a;
+}
+
+div .background {
+  width: 15px;
+  height: 15px;
+  background: #c8e84a;
+  border: 1px solid #c8e84a;
+}

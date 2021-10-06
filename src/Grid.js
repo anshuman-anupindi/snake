@@ -10,6 +10,7 @@ export default function Grid(props) {
       flexDirection: "column",
       alignItems: "center",
       justifyContent: "center",
+      border: "5px solid #c8e84a",
     },
   ];
 

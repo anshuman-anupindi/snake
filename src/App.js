@@ -3,11 +3,12 @@ import "./App.css";
 import Grid from "./Grid";
 import { useEffect, useState } from "react";
 import gridVar from "./helpers";
+const _ = require("underscore");
 
 function App() {
   let grid = gridVar;
   let [gameLost, setGameLost] = useState(false);
-  let speed = 500;
+  let speed = 100;
 
   let [currentDirection, setCurrentDirection] = useState("r");
 
@@ -16,27 +17,26 @@ function App() {
     [8, 4],
     [8, 5],
     [8, 6],
-    [7, 6],
   ]);
   let [food, setFood] = useState([
-    Math.floor(Math.random() * 17),
-    Math.floor(Math.random() * 17),
+    Math.floor(Math.random() * 16),
+    Math.floor(Math.random() * 28),
   ]);
 
   const directionHandler = (e) => {
     e = e || window.event;
     switch (e.keyCode) {
       case 38:
-        setCurrentDirection("u");
+        if (currentDirection != "d") setCurrentDirection("u");
         break;
       case 40:
-        setCurrentDirection("d");
+        if (currentDirection != "u") setCurrentDirection("d");
         break;
       case 37:
-        setCurrentDirection("l");
+        if (currentDirection != "r") setCurrentDirection("l");
         break;
       case 39:
-        setCurrentDirection("r");
+        if (currentDirection != "l") setCurrentDirection("r");
         break;
     }
   };
@@ -61,7 +61,7 @@ function App() {
         break;
     }
     newSnake.push(head);
-    if (head[0] == food[0] && head[1] == food[1]) {
+    if (_.isEqual(food, head)) {
       makeRandomFood();
     } else {
       newSnake.shift();
@@ -76,12 +76,12 @@ function App() {
 
   function checkInsideBorders() {
     let head = snakeCoords[snakeCoords.length - 1];
-    if (head[0] == -1 || head[0] == 17 || head[1] == 17 || head[1] == -1)
+    if (head[0] == -1 || head[0] == 16 || head[1] == 28 || head[1] == -1)
       setGameLost(true);
   }
 
   function makeRandomFood() {
-    setFood([Math.floor(Math.random() * 17), Math.floor(Math.random() * 17)]);
+    setFood([Math.floor(Math.random() * 16), Math.floor(Math.random() * 28)]);
   }
 
   function checkHasEatenItself() {
@@ -90,26 +90,32 @@ function App() {
       snakeCoords.slice(0, snakeCoords.length - 1),
     ];
     snakeRest.forEach((snakeCoord) => {
-      if (snakeCoord[0] == snakeHead[0] && snakeCoord[1] == snakeHead[1]) {
+      if (_.isEqual(snakeCoord, snakeHead)) {
         setGameLost(true);
       }
     });
   }
 
   useEffect(() => {
+    console.log(gameLost);
     if (gameLost) {
       alert(`You died! Your snake was ${snakeCoords.length} pieces long.`);
-      speed = 0;
     } else {
       setTimeout(moveSnake, speed);
     }
   }, [snakeCoords]);
 
+  document.addEventListener("keydown", directionHandler);
+
   return (
     <div
       className="App"
-      onKeyDown={(e) => directionHandler(e)}
-      style={{ display: "flex", flexDirection: "row" }}
+      style={{
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
     >
       <Grid
         className="App"
@@ -118,36 +124,7 @@ function App() {
         currentDirection={currentDirection}
         setCurrentDirection={setCurrentDirection}
         food={food}
-        onKeyDown={(e) => directionHandler(e)}
       />
-      <div style={{ display: "flex", flexDirection: "column" }}>
-        <button
-          onClick={() => setCurrentDirection("u")}
-          disabled={currentDirection == "d"}
-        >
-          Up
-        </button>
-        <div style={{ display: "flex", flexDirection: "row" }}>
-          <button
-            onClick={() => setCurrentDirection("l")}
-            disabled={currentDirection == "r"}
-          >
-            Left
-          </button>
-          <button
-            onClick={() => setCurrentDirection("d")}
-            disabled={currentDirection == "u"}
-          >
-            Down
-          </button>
-          <button
-            onClick={() => setCurrentDirection("r")}
-            disabled={currentDirection == "l"}
-          >
-            Right
-          </button>
-        </div>
-      </div>
     </div>
   );
 }
