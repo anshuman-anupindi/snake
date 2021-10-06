@@ -1,12 +1,12 @@
 const _ = require("underscore");
 
 export default function Cell(props) {
-  let [cellCoords, snakeCoords, hasSnake, hasFood, food] = [
+  let [cellCoords, snakeCoords, food, hasFood, hasSnake] = [
     [props.rowNum, props.colNum],
     props.snakeCoords,
-    false,
-    false,
     props.food,
+    false,
+    false,
   ];
 
   let pixelRows = [
