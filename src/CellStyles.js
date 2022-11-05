@@ -57,7 +57,7 @@ const cellTypeToStyle = (hasSnake, hasFood, rowNum, colNum, pixelColor, pixelSty
     }
 }
 
-const makePixelGrid = (pixelRows, cellTypeToStyle, rowStyle, hasSnake, hasFood) => pixelRows.map((pixelRow, rowNum) => {
+const cellTypeToPixelGrid = (pixelRows, cellTypeToStyle, rowStyle, hasSnake, hasFood) => pixelRows.map((pixelRow, rowNum) => {
     let [pixelColor, pixelStyle] = [
         null,
         {
@@ -77,4 +77,4 @@ const makePixelGrid = (pixelRows, cellTypeToStyle, rowStyle, hasSnake, hasFood) 
     );
     });
 
-export {checkCellHasSnakeAndFood, gridStyle, rowStyle, makePixelGrid, pixelRows, cellTypeToStyle}
+export {checkCellHasSnakeAndFood, gridStyle, rowStyle, cellTypeToPixelGrid, pixelRows, cellTypeToStyle}

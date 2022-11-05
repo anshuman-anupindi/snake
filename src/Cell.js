@@ -1,4 +1,4 @@
-import {checkCellHasSnakeAndFood, gridStyle, rowStyle, makePixelGrid, pixelRows, cellTypeToStyle} from "./CellStyles"
+import {checkCellHasSnakeAndFood, gridStyle, rowStyle, makePixelGrid, pixelRows, cellTypeToStyle, cellTypeToPixelGrid} from "./CellStyles"
 const _ = require("underscore");
 
 export default function Cell(props) {
@@ -11,11 +11,9 @@ export default function Cell(props) {
   ];
   let typeOfCell = checkCellHasSnakeAndFood(snakeCoords, cellCoords, food, hasFood, hasSnake);
 
-
   [hasSnake, hasFood] = [typeOfCell.hasSnake, typeOfCell.hasFood]
 
-  
-  let pixelGrid = makePixelGrid(pixelRows, cellTypeToStyle, rowStyle, hasSnake, hasFood)
+  let pixelGrid = cellTypeToPixelGrid(pixelRows, cellTypeToStyle, rowStyle, hasSnake, hasFood)
 
   return <div style={gridStyle}>{pixelGrid}</div>;
 }
