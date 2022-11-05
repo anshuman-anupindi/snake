@@ -1,9 +1,9 @@
 const _ = require("underscore");
 
 export default function Cell(props) {
-  let [cellCoords, snakeCoords, food, hasFood, hasSnake] = [
+  let [cellCoords, snake, food, hasFood, hasSnake] = [
     [props.rowNum, props.colNum],
-    props.snakeCoords,
+    props.snake,
     props.food,
     false,
     false,
@@ -15,10 +15,8 @@ export default function Cell(props) {
     [7, 8, 9],
   ];
 
-  snakeCoords.forEach((snakeCoord) => {
-    if (_.isEqual(snakeCoord, cellCoords)) {
-      hasSnake = true;
-    }
+  snake.forEach((snakeCoord) => {
+    if (_.isEqual(snakeCoord, cellCoords)) hasSnake = true;
   });
 
   if (_.isEqual(food, cellCoords)) hasFood = true;
@@ -44,40 +42,37 @@ export default function Cell(props) {
     justifyContent: "center",
   };
 
-  let pixelGrid = pixelRows.map((pixelRow, rowNum) => {
-    return (
-      <div style={rowStyle}>
-        {pixelRow.map((pixel, colNum) => {
-          let [pixelColor, pixelStyle] = [
-            null,
-            {
-              width: "5px",
-              height: "5px",
-              backgroundColor: "",
-              border: "1px solid #c8e84a",
-            },
-          ];
+  let pixelGrid = pixelRows.map((pixelRow, rowNum) => (
+    <div style={rowStyle}>
+      {pixelRow.map((pixel, colNum) => {
+        let [pixelColor, pixelStyle] = [
+          null,
+          {
+            width: "10px",
+            height: "10px",
+            backgroundColor: "",
+            border: "1px solid #32a852",
+          },
+        ];
 
-          if (cellType() == "food") {
-            let isDiagonal =
-              rowNum == colNum ||
-              _.isEqual([rowNum, colNum], [0, 2]) ||
-              _.isEqual([rowNum, colNum], [2, 0]);
-            if (isDiagonal) pixelColor = "#00062e";
-            else pixelColor = "#c8e84a";
-            pixelStyle["backgroundColor"] = pixelColor;
-          } else if (cellType() == "snake") {
-            pixelColor = "#00062e";
-            pixelStyle["backgroundColor"] = pixelColor;
-          } else {
-            pixelColor = "#c8e84a";
-            pixelStyle["backgroundColor"] = pixelColor;
-          }
-          return <div style={pixelStyle}></div>;
-        })}
-      </div>
-    );
-  });
-
+        if (cellType() == "food") {
+          let isDiagonal =
+            rowNum == colNum ||
+            _.isEqual([rowNum, colNum], [0, 2]) ||
+            _.isEqual([rowNum, colNum], [2, 0]);
+          if (isDiagonal) pixelColor = "#00062e";
+          else pixelColor = "#32a852";
+          pixelStyle["backgroundColor"] = pixelColor;
+        } else if (cellType() == "snake") {
+          pixelColor = "#00062e";
+          pixelStyle["backgroundColor"] = pixelColor;
+        } else {
+          pixelColor = "#32a852";
+          pixelStyle["backgroundColor"] = pixelColor;
+        }
+        return <div style={pixelStyle}></div>;
+      })}
+    </div>
+  ));
   return <div style={gridStyle}>{pixelGrid}</div>;
 }

@@ -1,22 +1,16 @@
 import Cell from "./Cell";
 
 export default function Row(props) {
-  let [style, snakeCoords, rowNum, rowVar, food] = [
+  let [style, snake, rowNum, row, food] = [
     { display: "flex", flexDirection: "row" },
-    props.snakeCoords,
+    props.snake,
     props.rowNum,
-    props.rowVar,
+    props.row,
     props.food,
   ];
 
-  let cellArray = rowVar.map((cell, idx) => (
-    <Cell
-      cellVar={cell}
-      rowNum={rowNum}
-      colNum={idx}
-      snakeCoords={snakeCoords}
-      food={food}
-    ></Cell>
+  let cellArray = row.map((cell, idx) => (
+    <Cell rowNum={rowNum} colNum={idx} snake={snake} food={food}></Cell>
   ));
 
   return <div style={style}>{cellArray}</div>;

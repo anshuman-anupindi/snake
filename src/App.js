@@ -1,18 +1,18 @@
 import logo from "./logo.svg";
 import "./App.css";
 import Grid from "./Grid";
+import Scores from "./Scores";
 import { useEffect, useState } from "react";
-import gridVar from "./helpers";
+import grid from "./helpers";
 const _ = require("underscore");
 
 function App() {
-  let grid = gridVar;
   let [gameLost, setGameLost] = useState(false);
   let speed = 100;
 
   let [currentDirection, setCurrentDirection] = useState("r");
 
-  let [snakeCoords, setSnakeCoords] = useState([
+  let [snake, setSnake] = useState([
     [8, 3],
     [8, 4],
     [8, 5],
@@ -22,6 +22,7 @@ function App() {
     Math.floor(Math.random() * 16),
     Math.floor(Math.random() * 28),
   ]);
+  let [scores, setScores] = useState([]);
 
   const directionHandler = (e) => {
     e = e || window.event;
@@ -41,11 +42,30 @@ function App() {
     }
   };
 
-  function moveSnake() {
-    let [head, newSnake] = [
-      snakeCoords[snakeCoords.length - 1],
-      snakeCoords.slice(0),
+  function checkInsideBorders() {
+    let head = snake[snake.length - 1];
+    if (head[0] == -1 || head[0] == 16 || head[1] == 28 || head[1] == -1)
+      setGameLost(true);
+  }
+
+  function makeRandomFood() {
+    setFood([Math.floor(Math.random() * 16), Math.floor(Math.random() * 28)]);
+  }
+
+  function checkHasEatenItself() {
+    let [snakeHead, snakeRest] = [
+      snake[snake.length - 1],
+      snake.slice(0, snake.length - 1),
     ];
+    snakeRest.forEach((snakeCoord) => {
+      if (_.isEqual(snakeCoord, snakeHead)) {
+        setGameLost(true);
+      }
+    });
+  }
+
+  function moveSnake() {
+    let [head, newSnake] = [snake[snake.length - 1], snake.slice(0)];
     switch (currentDirection) {
       case "r":
         head = [head[0], head[1] + 1];
@@ -61,49 +81,40 @@ function App() {
         break;
     }
     newSnake.push(head);
-    if (_.isEqual(food, head)) {
-      makeRandomFood();
-    } else {
-      newSnake.shift();
-    }
+    if (_.isEqual(food, head)) makeRandomFood();
+    else newSnake.shift();
     checkInsideBorders();
     checkHasEatenItself();
 
-    if (!gameLost) {
-      setSnakeCoords(newSnake);
+    if (!gameLost) setSnake(newSnake);
+  }
+
+  function resetGame() {
+    if (gameLost) {
+      setGameLost(false);
+      setSnake([
+        [8, 3],
+        [8, 4],
+        [8, 5],
+        [8, 6],
+      ]);
+      setCurrentDirection("r");
+      makeRandomFood();
+      document.removeEventListener("keydown", resetGame);
     }
-  }
-
-  function checkInsideBorders() {
-    let head = snakeCoords[snakeCoords.length - 1];
-    if (head[0] == -1 || head[0] == 16 || head[1] == 28 || head[1] == -1)
-      setGameLost(true);
-  }
-
-  function makeRandomFood() {
-    setFood([Math.floor(Math.random() * 16), Math.floor(Math.random() * 28)]);
-  }
-
-  function checkHasEatenItself() {
-    let [snakeHead, snakeRest] = [
-      snakeCoords[snakeCoords.length - 1],
-      snakeCoords.slice(0, snakeCoords.length - 1),
-    ];
-    snakeRest.forEach((snakeCoord) => {
-      if (_.isEqual(snakeCoord, snakeHead)) {
-        setGameLost(true);
-      }
-    });
   }
 
   useEffect(() => {
-    console.log(gameLost);
+    document.addEventListener("keydown", resetGame);
+  }, [scores]);
+
+  useEffect(() => {
     if (gameLost) {
-      alert(`You died! Your snake was ${snakeCoords.length} pieces long.`);
+      setScores([...scores, snake.length * 10]);
     } else {
       setTimeout(moveSnake, speed);
     }
-  }, [snakeCoords]);
+  }, [snake]);
 
   document.addEventListener("keydown", directionHandler);
 
@@ -117,14 +128,16 @@ function App() {
         alignItems: "center",
       }}
     >
+      <header>Nokia's Snake</header>
       <Grid
-        className="App"
-        gridVar={grid}
-        snakeCoords={snakeCoords}
+        grid={grid}
+        snake={snake}
         currentDirection={currentDirection}
         setCurrentDirection={setCurrentDirection}
         food={food}
       />
+      <Scores snake={snake} scores={scores} />
+      <image src="nokia.png" />
     </div>
   );
 }
