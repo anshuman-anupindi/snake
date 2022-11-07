@@ -1,5 +1,8 @@
 const _ = require("underscore");
-let [width, length] = [16, 28]
+
+// move constants to their own file
+
+let [width, length] = [16, 28];
 let gridVar = [];
 
 for (let i = 0; i < width; i++) {
@@ -13,6 +16,8 @@ for (let j = 0; j < width; j++) {
 
 const innerDirectionHandler = (e, currentDirection, setCurrentDirection) => {
   e = e || window.event;
+
+  // add a default case
   switch (e.keyCode) {
     case 38:
       if (currentDirection != "d") setCurrentDirection("u");
@@ -29,11 +34,21 @@ const innerDirectionHandler = (e, currentDirection, setCurrentDirection) => {
   }
 };
 
-function moveSnake(snakeCoords, setSnakeCoords, food, setFood, currentDirection, setGameLost) {
+// think about creating a class out of these functions
+function moveSnake(
+  snakeCoords,
+  setSnakeCoords,
+  food,
+  setFood,
+  currentDirection,
+  setGameLost
+) {
   let [head, newSnake] = [
     snakeCoords[snakeCoords.length - 1],
     snakeCoords.slice(0),
   ];
+
+  // add a default case
   switch (currentDirection) {
     case "r":
       head = [head[0], head[1] + 1];
@@ -55,13 +70,18 @@ function moveSnake(snakeCoords, setSnakeCoords, food, setFood, currentDirection,
     newSnake.shift();
   }
 
-  if (!checkHasEatenItself(snakeCoords, setGameLost) && checkInsideBorders(setGameLost, snakeCoords)) {
+  if (
+    !checkHasEatenItself(snakeCoords, setGameLost) &&
+    checkInsideBorders(setGameLost, snakeCoords)
+  ) {
     setSnakeCoords(newSnake);
   }
 }
 
 function checkInsideBorders(setGameLost, snakeCoords) {
   let head = snakeCoords[snakeCoords.length - 1];
+
+  // use constants for width and height here
   if (head[0] < 0 || head[0] > 15 || head[1] > 27 || head[1] < 0) {
     setGameLost(true);
     return false;
@@ -87,4 +107,11 @@ function checkHasEatenItself(snakeCoords, setGameLost) {
   return false;
 }
 
-export {gridVar, checkHasEatenItself, checkInsideBorders, makeRandomFood, moveSnake, innerDirectionHandler};
+export {
+  gridVar,
+  checkHasEatenItself,
+  checkInsideBorders,
+  makeRandomFood,
+  moveSnake,
+  innerDirectionHandler,
+};

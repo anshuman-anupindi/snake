@@ -15,7 +15,13 @@ export default function Grid(props) {
   ];
 
   let rowArray = gridVar.map((row, idx) => (
-    <Row rowVar={row} rowNum={idx} snakeCoords={snakeCoords} food={food}></Row>
+    <Row
+      key={idx}
+      rowVar={row}
+      rowNum={idx}
+      snakeCoords={snakeCoords}
+      food={food}
+    ></Row>
   ));
 
   return <div style={style}>{rowArray}</div>;

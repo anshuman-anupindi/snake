@@ -2,7 +2,7 @@ import logo from "./logo.svg";
 import "./App.css";
 import Grid from "./Grid";
 import { useEffect, useState } from "react";
-import {gridVar, moveSnake, innerDirectionHandler} from "./helpers";
+import { gridVar, moveSnake, innerDirectionHandler } from "./Game";
 const _ = require("underscore");
 
 function App() {
@@ -33,12 +33,20 @@ function App() {
       alert(`You died! Your snake was ${snakeCoords.length} pieces long.`);
     } else {
       setTimeout(() => {
-        moveSnake(snakeCoords, setSnakeCoords, food, setFood, currentDirection, setGameLost)
+        moveSnake(
+          snakeCoords,
+          setSnakeCoords,
+          food,
+          setFood,
+          currentDirection,
+          setGameLost
+        );
       }, speed);
     }
   }, [snakeCoords, gameLost]);
 
-  const directionHandler = (e) =>  innerDirectionHandler(e, currentDirection, setCurrentDirection);
+  const directionHandler = (e) =>
+    innerDirectionHandler(e, currentDirection, setCurrentDirection);
   document.addEventListener("keydown", directionHandler);
 
   return (

@@ -11,6 +11,7 @@ export default function Row(props) {
 
   let cellArray = rowVar.map((cell, idx) => (
     <Cell
+      key={idx}
       cellVar={cell}
       rowNum={rowNum}
       colNum={idx}
