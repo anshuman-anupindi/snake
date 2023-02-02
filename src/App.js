@@ -42,17 +42,19 @@ function App() {
     }
   };
 
-  function checkInsideBorders() {
+  function checkInsideBorders(snake) {
     let head = snake[snake.length - 1];
-    if (head[0] == -1 || head[0] == 16 || head[1] == 28 || head[1] == -1)
+    if (head[0] == -1 || head[0] == 16 || head[1] == 28 || head[1] == -1) {
       setGameLost(true);
+      return true;
+    }
   }
 
   function makeRandomFood() {
     setFood([Math.floor(Math.random() * 16), Math.floor(Math.random() * 28)]);
   }
 
-  function checkHasEatenItself() {
+  function checkHasEatenItself(snake) {
     let [snakeHead, snakeRest] = [
       snake[snake.length - 1],
       snake.slice(0, snake.length - 1),
@@ -60,6 +62,7 @@ function App() {
     snakeRest.forEach((snakeCoord) => {
       if (_.isEqual(snakeCoord, snakeHead)) {
         setGameLost(true);
+        return true;
       }
     });
   }
@@ -83,8 +86,9 @@ function App() {
     newSnake.push(head);
     if (_.isEqual(food, head)) makeRandomFood();
     else newSnake.shift();
-    checkInsideBorders();
-    checkHasEatenItself();
+    checkInsideBorders(newSnake);
+    checkHasEatenItself(newSnake);
+    console.log(food);
 
     if (!gameLost) setSnake(newSnake);
   }

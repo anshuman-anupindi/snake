@@ -12,7 +12,7 @@ const cellState = (snake, hasSnake, food, hasFood, cellCoords) => {
   let [cellX, cellY] = [cellCoords[0], cellCoords[1]];
   let [foodX, foodY] = [food[0], food[1]];
   hasSnake = snake.some(([x, y]) => x == cellX && y == cellY);
-  hasFood = foodX == cellY && foodY == cellY;
+  hasFood = foodX == cellX && foodY == cellY;
   return { hasSnake, hasFood };
 };
 
